@@ -1,0 +1,27 @@
+from google.colab import files
+import os
+
+uploaded = files.upload()
+
+!mkdir -p ~/.kaggle
+!mv kaggle.json ~/.kaggle/
+!chmod 600 ~/.kaggle/kaggle.json
+!kaggle competitions download -c galaxy-zoo-the-galaxy-challenge
+print("Download complete.")
+
+!unzip -oq galaxy-zoo-the-galaxy-challenge.zip
+!unzip -oq images_training_rev1.zip -d images_training
+!unzip -oq training_solutions_rev1.zip
+
+print("Extraction complete")
+
+import pandas as pd
+
+solutions_csv_path = 'training_solutions_rev1.csv'
+solutions = pd.read_csv(solutions_csv_path)
+
+print("First 5 rows of the solutions file:")
+print(solutions.head())
+
+print("\nColumn names:")
+print(list(solutions.columns))
