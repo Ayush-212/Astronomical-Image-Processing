@@ -1,0 +1,45 @@
+#Data Preparation
+import os
+import shutil
+import random
+import pandas as pd
+
+source_image_dir = 'images_training/images_training_rev1'
+solutions_df = pd.read_csv('training_solutions_rev1.csv')
+
+dest_class_a_dir = 'subset_data/Round'
+dest_class_b_dir = 'subset_data/EdgeOn'
+
+os.makedirs(dest_class_a_dir, exist_ok=True)
+os.makedirs(dest_class_b_dir, exist_ok=True)
+
+NUM_SAMPLES_PER_CLASS = 757
+#from the data sheet the purity was determined
+round_galaxies = solutions_df[solutions_df['Class1.1'] > 0.9]
+edge_on_galaxies = solutions_df[solutions_df['Class2.1'] > 0.9]
+
+print(f"Found {len(round_galaxies)} high-confidence 'Round' galaxies.")
+print(f"Found {len(edge_on_galaxies)} high-confidence 'Edge-on' galaxies.")
+
+# Randomly sample 500 GalaxyIDs from each class
+# We use a fixed random_state=42 so we get the same 1000 images every time we run it
+round_samples = round_galaxies.sample(n=NUM_SAMPLES_PER_CLASS, random_state=40)
+edge_on_samples = edge_on_galaxies.sample(n=NUM_SAMPLES_PER_CLASS, random_state=40)
+
+
+def copy_files(sample_df, destination_dir, class_name):
+    copied_count = 0
+    for galaxy_id in sample_df['GalaxyID']:
+        file_name = f"{galaxy_id}.jpg"
+        source_path = os.path.join(source_image_dir, file_name)
+        destination_path = os.path.join(destination_dir, file_name)
+        # Only copy if the file actually exists to avoid errors(Model failed to execute some times)
+        if os.path.exists(source_path):
+            shutil.copy(source_path, destination_path)
+            copied_count += 1
+
+copy_files(round_samples, dest_class_a_dir, "Round")
+copy_files(edge_on_samples, dest_class_b_dir, "Edge-on")
+
+print("Complete.")
+
