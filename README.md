@@ -72,5 +72,4 @@ The core of this project is a deep Convolutional Neural Network (CNN) designed w
 
 ## Results
 
-
 The training history plots (Accuracy and Loss) at the end of the notebook provide insights into the model's performance. These plots indicate how well the model learned on the training data and generalized to the unseen validation data over 10 epochs.
